@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 
-[RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour
 {
 	public float speed;
@@ -11,15 +10,21 @@ public class Player : MonoBehaviour
 	public float maxY;
 	public GameObject laser;
 	public Transform laserParent;
-	private AudioSource laserAudio;
+	public AudioSource laserAudio;
+	private bool paused = false;
+	private Vector3 startPosition;
 
 	public void Start()
 	{
-		laserAudio = GetComponent<AudioSource>();
+		startPosition = transform.position;
 	}
 
 	public void Update()
 	{
+		if (paused)
+		{
+			return;
+		}
 		Vector3 direction = new Vector3(0, 0, 0);
 		if (Input.GetKey("up") || Input.GetKey("w"))
 		{
@@ -48,5 +53,16 @@ public class Player : MonoBehaviour
 			Instantiate(laser, transform.position, Quaternion.identity, laserParent);
 			laserAudio.Play();
 		}
+	}
+
+	public void Pause()
+	{
+		paused = true;
+	}
+
+	public void Reset()
+	{
+		paused = false;
+		transform.position = startPosition;
 	}
 }
