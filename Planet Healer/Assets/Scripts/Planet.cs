@@ -11,6 +11,9 @@ public class Planet : MonoBehaviour
 	private int hurt;
 	public Sprite[] sprites;
 	public SpriteRenderer skull;
+	public SpriteRenderer explosion;
+	public float deathTime;
+	private bool dead = false;
 
 	public void Start()
 	{
@@ -23,7 +26,7 @@ public class Planet : MonoBehaviour
 	public void Update()
 	{
 		transform.Translate(Vector3.down * speed * Time.deltaTime);
-		if (transform.position.y < minY)
+		if (transform.position.y < minY && !dead)
 		{
 			if (hurt > 0)
 			{
@@ -31,7 +34,8 @@ public class Planet : MonoBehaviour
 			}
 			else
 			{
-				Destroy(gameObject);
+				dead = true;
+				Destroy(gameObject, deathTime);
 			}
 		}
 	}
@@ -46,7 +50,7 @@ public class Planet : MonoBehaviour
 		{
 			if (hurt > 0)
 			{
-				hurt -= 1;
+				hurt--;
 				if (hurt <= 0)
 				{
 					skull.enabled = false;
@@ -57,9 +61,17 @@ public class Planet : MonoBehaviour
 		}
 	}
 
-	private void Die()
+	public void Die()
 	{
+		if (dead)
+		{
+			return;
+		}
+		dead = true;
 		transform.parent.GetComponent<PlanetSpawner>().LoseHealth();
-		Destroy(gameObject);
+		GetComponent<SpriteRenderer>().enabled = false;
+		skull.enabled = false;
+		explosion.enabled = true;
+		Destroy(gameObject, deathTime);
 	}
 }

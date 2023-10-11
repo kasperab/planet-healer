@@ -20,6 +20,7 @@ public class PlanetSpawner : MonoBehaviour
 	private int highscore;
 	public AudioSource healAudio;
 	public AudioSource explosionAudio;
+	public AudioSource music;
 	public Player player;
 	public GameObject gameOver;
 
@@ -63,6 +64,11 @@ public class PlanetSpawner : MonoBehaviour
 				highscoreText.text = highscore.ToString();
 			}
 			player.Pause();
+			music.Stop();
+			foreach (Planet planet in GetComponentsInChildren<Planet>())
+			{
+				planet.Die();
+			}
 		}
 	}
 
@@ -82,9 +88,9 @@ public class PlanetSpawner : MonoBehaviour
 	{
 		gameOver.SetActive(false);
 		health = hearts.Length;
-		for (int index = 0; index < hearts.Length; index++)
+		foreach (Image heart in hearts)
 		{
-			hearts[index].enabled = true;
+			heart.enabled = true;
 		}
 		minTime = minTimeStart;
 		maxTime = maxTimeStart;
@@ -92,5 +98,6 @@ public class PlanetSpawner : MonoBehaviour
 		score = 0;
 		scoreText.text = score.ToString();
 		player.Reset();
+		music.Play();
 	}
 }
